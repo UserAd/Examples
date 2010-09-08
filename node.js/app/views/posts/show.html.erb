@@ -1,0 +1,71 @@
+<%content_for :js do -%>
+  <%=javascript_include_tag 'socket.io/socket.io'%>
+  <script type="text/javascript">
+    //Here subscribe to new comments.
+    io.setPath('/javascripts/socket.io/');
+    var Comments = {
+			socket: null,
+			post_id: null,
+			init: function(post_id) {
+			  var self = this;
+				this.post_id = post_id;
+				this.connect();
+				$('#add_comment form').bind('submit', function(){ self.send(); return false;});
+			},
+			connect: function() {
+				this.socket = new io.Socket('<%=request.env['SERVER_NAME']%>', {port: 3333});
+				this.socket.connect(); //Connect to our node.js server
+				var self = this;
+				this.socket.on('connect', function(){
+				  self.socket.send(self.post_id);
+				});
+				this.socket.on('message', function(message){ self.on_message(message); });
+				this.socket.on('error', function(e){self.on_close();});
+				this.socket.on('close', function(e){self.on_close();});
+			},			
+			on_message: function(message) {
+				$('#comments').prepend(message);
+			},
+			on_close: function() {
+				console.log('Socket closed. Reconnecting');
+				this.connect();
+			},
+			send: function() {
+			  console.log('Send new comment');
+			  $.ajax({data:$.param($('#add_comment form').serializeArray()), type:'post', url:$('#add_comment form').attr('action')});
+			}
+		};
+		
+		jQuery(document).ready(function($) {
+    	Comments.init(<%=@post.id%>);
+    });
+    
+    function show_hide(el) {
+      $('#' + el).toggleClass('hidden');
+    }
+    
+    
+  </script>
+<%end -%>
+<div class="post">
+  <h1><%=@post.title%></h1>
+  <p><%=@post.content%></p>
+</div>
+
+<h3><%=link_to_function 'Add comment', "show_hide('add_comment')"%></h3>
+<div id="add_comment" class="hidden">
+  <%form_for :comment, Comment.new, :url => post_comments_path(@post) do |f| -%>
+    <%= f.label :title, "Title"%>
+    <%= f.text_field :title %>
+    <%= f.label :content, "Content" %>
+    <%= f.text_area :content %>
+    <%= f.submit "Save", :class => 'submit'%>
+  <%end -%>
+</div>
+
+<h3>Comments</h3>
+<div id="comments">
+  <%@post.comments.each do |comment| -%>
+    <%=render :partial => 'comments/comment', :locals => {:comment => comment}%>
+  <%end -%>
+</div>

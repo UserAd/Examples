@@ -1,0 +1,9 @@
+[submodule "node.js/vendor/node/lib/socket.io"]
+	path = node.js/vendor/node/lib/socket.io
+	url = http://github.com/LearnBoost/Socket.IO-node.git
+[submodule "node.js/vendor/node/lib/redis-node-client"]
+	path = node.js/vendor/node/lib/redis-node-client
+	url = git://github.com/fictorial/redis-node-client.git
+[submodule "node.js/public/javascripts/socket.io"]
+	path = node.js/public/javascripts/socket.io
+	url = git://github.com/LearnBoost/Socket.IO.git
