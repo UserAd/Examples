@@ -3,15 +3,14 @@
 
 <html lang='ru' xml:lang='ru' xmlns='http://www.w3.org/1999/xhtml'>
 <head>
-	<title>ROUTE</title>
-	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
-	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js" type="text/javascript" charset="utf-8"></script>
-	<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
-	<script type="text/javascript">
-	  var map;
-	  var geocoder;
-	  var route = [];
-	  var routePath;
+  <title>ROUTE</title>
+  <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+  <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
+  <script type="text/javascript">
+    var map;
+    var geocoder;
+    var routePath;
     
     function getRoute(from, to) {
       geoCode(from, function(from_coord) {
@@ -32,54 +31,72 @@
     }
     
     function displayRoute(coordinates) {
+      if (routePath) {
+        routePath.setMap(null);
+      }
       url = 'http://routes.cloudmade.com/58c7324744044f63ba20f094921e03f2/api/0.3/' + coordinates + '/car/shortest.js?units=km&callback=?';
       $.getJSON(url, function(data){
-	      route = [];
-	      for(var i=0;i<data.route_geometry.length;i++) {
-	        route.push(new google.maps.LatLng(data.route_geometry[i][0], data.route_geometry[i][1]));
-	      }
-	      routePath = new google.maps.Polyline({
+        var route = [];
+        for(var i=0;i<data.route_geometry.length;i++) {
+          route.push(new google.maps.LatLng(data.route_geometry[i][0], data.route_geometry[i][1]));
+        }
+        routePath = new google.maps.Polyline({
             path: route
         });
 
         routePath.setMap(map);
-	    });
+      });
     }
     
-	  
-	  $(document).ready(function() {
-	    var center = new google.maps.LatLng(55.7522, 37.6156);
+    
+    $(document).ready(function() {
+      var center = new google.maps.LatLng(55.7522, 37.6156);
       var myOptions = {
         zoom: 8,
         center: center,
         mapTypeId: google.maps.MapTypeId.ROADMAP
       };
-	    map = new google.maps.Map(document.getElementById("map_container"), myOptions);
-	    geocoder = new google.maps.Geocoder();
-	    getRoute('Россия, Москва', 'Россия, Екатеринбург');	    
-	  });
-	</script>
-	<style type="text/css" media="screen">
+      map = new google.maps.Map(document.getElementById("map_container"), myOptions);
+      geocoder = new google.maps.Geocoder();
+      $('#route').click(function(){
+        getRoute($('#from').val(), $('#to').val());
+      });
+      getRoute($('#from').val(), $('#to').val());      
+    });
+  </script>
+  <style type="text/css" media="screen">
   * {margin: 0; padding: 0;} 
   html{padding: 0; height: 100%; width: 100%;}
   body {
-  	min-height: 100%;
-  	width: 100%;
-  	position: relative;
-  	padding: 0px;
-  	margin: 0px;
+    min-height: 100%;
+    width: 100%;
+    position: relative;
+    padding: 0px;
+    margin: 0px;
     font-family:arial,sans-serif;
     height:100%; /* fix height to 100% for IE */
     max-height:100%; /* fix height for other browsers */
     min-width:54em;
     min-height:24em; 
   }
-
-	  #map_container {width:100%;height:100%;}
-	</style>
+  #search_form {width:400px;position:absolute;left:50%;margin-left:-200px;height:30px;top:10px;background:#000;z-index:100;line-height:30px;padding:5px;}
+  #search_form input, #search_form label {}
+  #search_form input {border:1px solid #000;}
+  #search_form label {color:#fff;}
+  #map_container {width:100%;height:100%;}
+  #fork {position:absolute;right:0;top:0;z-index:100;}
+  </style>
 </head>
 
 <body>
+  <a id="fork" href="http://github.com/UserAd/Examples"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a> 
+  <div id="search_form">
+    <label for="from">From:</label>
+    <input type="text" id="from" value="Russia, Moscow"/>
+    <label for="to">To:</label>
+    <input type="text" id="to" value="Russia, Yekaterinburg" />
+    <input type="submit" value="Search route" id="route" />
+  </div>
   <div id="map_container"></div>
 </body>
 </html>
