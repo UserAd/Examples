@@ -1,0 +1,85 @@
+<?xml version='1.0' encoding='utf-8' ?> 
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
+
+<html lang='ru' xml:lang='ru' xmlns='http://www.w3.org/1999/xhtml'>
+<head>
+	<title>ROUTE</title>
+	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=true"></script>
+	<script type="text/javascript">
+	  var map;
+	  var geocoder;
+	  var route = [];
+	  var routePath;
+    
+    function getRoute(from, to) {
+      geoCode(from, function(from_coord) {
+        geoCode(to, function(to_coord) {
+          displayRoute(from_coord.concat(to_coord).join(','));
+        });
+      });
+    }
+    
+    function geoCode(name, callback) {
+      geocoder.geocode( { 'address': name}, function(results, status) {
+        if (status == google.maps.GeocoderStatus.OK) {
+          callback([results[0].geometry.location.Ia, results[0].geometry.location.Ja]);
+        } else {
+          console.log("Geocode was not successful for (" + name + ") reason: " + status);
+        }
+      });
+    }
+    
+    function displayRoute(coordinates) {
+      url = 'http://routes.cloudmade.com/58c7324744044f63ba20f094921e03f2/api/0.3/' + coordinates + '/car/shortest.js?units=km&callback=?';
+      $.getJSON(url, function(data){
+	      route = [];
+	      for(var i=0;i<data.route_geometry.length;i++) {
+	        route.push(new google.maps.LatLng(data.route_geometry[i][0], data.route_geometry[i][1]));
+	      }
+	      routePath = new google.maps.Polyline({
+            path: route
+        });
+
+        routePath.setMap(map);
+	    });
+    }
+    
+	  
+	  $(document).ready(function() {
+	    var center = new google.maps.LatLng(55.7522, 37.6156);
+      var myOptions = {
+        zoom: 8,
+        center: center,
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+      };
+	    map = new google.maps.Map(document.getElementById("map_container"), myOptions);
+	    geocoder = new google.maps.Geocoder();
+	    getRoute('Россия, Москва', 'Россия, Екатеринбург');	    
+	  });
+	</script>
+	<style type="text/css" media="screen">
+  * {margin: 0; padding: 0;} 
+  html{padding: 0; height: 100%; width: 100%;}
+  body {
+  	min-height: 100%;
+  	width: 100%;
+  	position: relative;
+  	padding: 0px;
+  	margin: 0px;
+    font-family:arial,sans-serif;
+    height:100%; /* fix height to 100% for IE */
+    max-height:100%; /* fix height for other browsers */
+    min-width:54em;
+    min-height:24em; 
+  }
+
+	  #map_container {width:100%;height:100%;}
+	</style>
+</head>
+
+<body>
+  <div id="map_container"></div>
+</body>
+</html>
