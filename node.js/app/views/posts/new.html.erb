@@ -1,0 +1,8 @@
+<h1>New post</h1>
+<%form_for :post, @post, :url => posts_path do |f|%>
+  <%= f.label :title, "Title" %>
+  <%= f.text_field :title %>
+  <%= f.label :content, "Content" %>
+  <%= f.text_area :content %>
+  <%= f.submit "Save", :disable_with => 'Saving...', :class => 'submit' %>
+<%end%>

@@ -1,0 +1,24 @@
+<html>
+  <head>
+    <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+    <%=yield :js%>
+    <style>
+      * {padding:0;margin:0;}
+      h1, h2, h3, h4 {padding-top:5px;padding-bottom:5px;}
+      #wrapper {width:600px;border:1px solid #ddd;margin:auto;padding:10px;}
+      .post, .comment {padding:5px;border:1px solid #ddd;margin-bottom:5px;}
+      label {display:block;margin-bottom:3px;margin-top:5px;}
+      input, textarea {border:1px solid #ddd;}
+      .submit {display:block;padding:6px;margin-top:10px;}
+      .hidden {display:none;}
+      #add_comment {border:1px solid #ddd;padding:5px;}
+      #add_comment textarea {height:100px;}
+    </style>
+    <title>Simple node.js and Rails integration blog</title>
+  </head>
+  <body>
+    <div id="wrapper">
+      <%=yield%>
+    </div>
+  </body>
+</html>
