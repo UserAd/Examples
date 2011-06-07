@@ -1,7 +1,0 @@
-<%@posts.each do |post|%>
-  <div class="post">
-    <h1><%=link_to post.title, post_path(post)%></h1>
-    <p><%=post.content%></p>
-  </div>
-<%end%>
-<%=link_to 'Add new post', new_post_path%>
