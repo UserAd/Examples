@@ -23,7 +23,7 @@
     function geoCode(name, callback) {
       geocoder.geocode( { 'address': name}, function(results, status) {
         if (status == google.maps.GeocoderStatus.OK) {
-          callback([results[0].geometry.location.Ia, results[0].geometry.location.Ja]);
+          callback([results[0].geometry.location.lat(), results[0].geometry.location.lng()]);
         } else {
           console.log("Geocode was not successful for (" + name + ") reason: " + status);
         }
