@@ -63,16 +63,22 @@ class window.FlagDetector
   find: () ->
     result = false
     white_blocks = 0
+    black_blocks = 0
     for x in [0..(@image_data.width / 6 - 1)]
       for y in [0..(@image_data.height / 6 - 1)]
         whites = 0
+        blacks = 0
         for x1 in [x*6..(x*6+6)]
           for y1 in [y*6..(y*6+6)]
             i = x1*4+y1*4*@image_data.width
             if @image_data.data[i] == 255
               whites += 1
+            if @image_data.data[i] == 0
+              blacks += 1
+              
+        black_blocks += 1 if blacks > @sensivity
         white_blocks += 1 if whites > @sensivity
-    white_blocks / 36
+    white_blocks / (144 - black_blocks)
             
         
         

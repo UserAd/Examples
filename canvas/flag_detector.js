@@ -87,22 +87,26 @@
     };
 
     FlagDetector.prototype.find = function() {
-      var i, result, white_blocks, whites, x, x1, y, y1, _ref, _ref2, _ref3, _ref4, _ref5, _ref6;
+      var black_blocks, blacks, i, result, white_blocks, whites, x, x1, y, y1, _ref, _ref2, _ref3, _ref4, _ref5, _ref6;
       result = false;
       white_blocks = 0;
+      black_blocks = 0;
       for (x = 0, _ref = this.image_data.width / 6 - 1; 0 <= _ref ? x <= _ref : x >= _ref; 0 <= _ref ? x++ : x--) {
         for (y = 0, _ref2 = this.image_data.height / 6 - 1; 0 <= _ref2 ? y <= _ref2 : y >= _ref2; 0 <= _ref2 ? y++ : y--) {
           whites = 0;
+          blacks = 0;
           for (x1 = _ref3 = x * 6, _ref4 = x * 6 + 6; _ref3 <= _ref4 ? x1 <= _ref4 : x1 >= _ref4; _ref3 <= _ref4 ? x1++ : x1--) {
             for (y1 = _ref5 = y * 6, _ref6 = y * 6 + 6; _ref5 <= _ref6 ? y1 <= _ref6 : y1 >= _ref6; _ref5 <= _ref6 ? y1++ : y1--) {
               i = x1 * 4 + y1 * 4 * this.image_data.width;
               if (this.image_data.data[i] === 255) whites += 1;
+              if (this.image_data.data[i] === 0) blacks += 1;
             }
           }
+          if (blacks > this.sensivity) black_blocks += 1;
           if (whites > this.sensivity) white_blocks += 1;
         }
       }
-      return white_blocks / 36;
+      return white_blocks / (144 - black_blocks);
     };
 
     return FlagDetector;
