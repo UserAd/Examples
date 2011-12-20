@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<title>index</title>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="imagedata.js" type="text/javascript" charset="utf-8"></script>
+	<script src="flag_detector.js" type="text/javascript" charset="utf-8"></script>
+	<script type="text/javascript" charset="utf-8">
+		$(document).ready(function() {
+			$.getImageData({
+			  url: "https://twimg0-a.akamaihd.net/profile_images/1680868313/15.jpg",
+			  success: function(image){
+					canvas = $('#recognizer')[0];
+					context = canvas.getContext("2d");
+					context.drawImage(image, 0, 0);
+					var detector = new window.FlagDetector(context, canvas);
+					var new_data = detector.search();
+					canvas2 = $('#recognizer2')[0];
+					context2 = canvas2.getContext("2d");
+					context2.putImageData(new_data,0,0);
+					console.log("Flag factor: " + detector.find());
+			  },
+			  error: function(xhr, text_status){
+					console.log('fuck');
+			  }
+			});
+		});
+	</script>
+</head>
+<body>
+
+	<div id="worker">
+		<canvas id="recognizer" width="72" height="72"></canvas>
+		<canvas id="recognizer2" width="72" height="72"></canvas>
+
+	</div>
+
+</body>
+</html>
